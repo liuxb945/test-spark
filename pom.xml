@@ -1,0 +1,139 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.abcd.test</groupId>
+  <artifactId>test_spark</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+    <dependency> <!-- Spark dependency -->
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_2.10</artifactId>
+      <version>1.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.typesafe.play/play-json_2.11 -->
+	<dependency>
+	    <groupId>com.typesafe.play</groupId>
+	    <artifactId>play-json_2.11</artifactId>
+	    <version>2.4.5</version>
+	</dependency>
+    
+  </dependencies>
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <buildcommands>
+            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
+          </buildcommands>
+          <additionalProjectnatures>
+            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
+          </additionalProjectnatures>
+          <classpathContainers>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
+          </classpathContainers>
+        </configuration>
+      </plugin>
+      <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.3</version>
+          <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
+          </configuration>
+	</plugin>
+	<!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->  
+            <!-- <plugin>  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-jar-plugin</artifactId>  
+                <configuration>  
+                    <archive>  
+                        <manifest>  
+                            <addClasspath>true</addClasspath>  
+                            <classpathPrefix>lib/</classpathPrefix>  
+                        </manifest>  
+                    </archive>  
+                </configuration>  
+            </plugin> --> 
+	<!-- 拷贝依赖的jar包到lib目录 -->  
+            <!-- <plugin>  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-dependency-plugin</artifactId>  
+                <executions>  
+                    <execution>  
+                        <id>copy</id>  
+                        <phase>package</phase>  
+                        <goals>  
+                            <goal>copy-dependencies</goal>  
+                        </goals>  
+                        <configuration>  
+                            <outputDirectory>  
+                                ${project.build.directory}/lib  
+                            </outputDirectory>  
+                        </configuration>  
+                    </execution>  
+                </executions>  
+            </plugin> -->
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<archive>  
+                        <manifest>  
+                            <addClasspath>true</addClasspath>  
+                        </manifest>  
+                    </archive>  
+					<excludes>
+						<excludes>**/conf/**</excludes>
+						<excludes>**/assembly.xml</excludes>
+					</excludes>
+				</configuration>
+			</plugin>
+            <plugin>
+                <!-- NOTE: We don't need a groupId specification because the group is
+                    org.apache.maven.plugins ...which is assumed by default. -->
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+    </plugins>
+  </build>
+</project>
